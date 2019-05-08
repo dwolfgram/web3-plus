@@ -1,0 +1,11 @@
+{
+  "name": "web3-plus",
+  "version": "1.0.0",
+  "description": "BIP39 & BIP44 implemented alongside payment libs to create HD wallets and send transactions",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dan Wolfgram",
+  "license": "ISC"
+}
