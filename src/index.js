@@ -44,10 +44,14 @@ const calcBip32RootKeyFromSeed = (mnemonic, network) => {
 const getAddress = (node, segwitAvailable, network) => {
   if (segwitAvailable) {
     const wif = node.toWIF()
-    const keyPair = bitcoin.ECPair.fromWIF(wif)
-    const { address } = bitcoin.payments.p2sh({
+    const keyPair = bitcoin.ECPair.fromWIF(wif, network)
+    let { address } = bitcoin.payments.p2sh({
       redeem: bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
     })
+    if (network === COINS.ltc.network) {
+      const decoded = bitcoin.address.fromBase58Check(address)
+      address = bitcoin.address.toBase58Check(decoded['hash'], 50)
+    }
     return address
   } else {
     const keyPair = bitcoin.ECPair.makeRandom({ network })
