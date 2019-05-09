@@ -1,34 +1,27 @@
-import config from './config'
-import { convertRippleAddress, convertRipplePrivate } from './utils/ripple-utils'
-import bip39 from 'bip39'
-import bip32 from 'bip32'
-import bitcoin from 'bitcoinjs-lib'
-import ethUtil from 'ethereumjs-util'
-import Nebulas from 'nebulas'
-import bchaddr from 'bchaddrjs'
+const config = require('./config')
+const rippleUtils = require('./utils/ripple-utils')
+const bip39 = require('bip39')
+const bip32 = require('bip32')
+const bitcoin = require('bitcoinjs-lib')
+const ethUtil = require('ethereumjs-util')
+const Nebulas = require('nebulas')
+const bchaddr = require('bchaddrjs')
 
 const COINS = config.coins
 
-export const hasStrongRandom = () => {
-  return 'crypto' in window && window['crypto'] !== null
-}
-
-export const validateMnemonic = (mnemonic, wordlist) => {
+const validateMnemonic = (mnemonic, wordlist) => {
   return bip39.validateMnemonic(mnemonic, wordlist)
 }
 
-export const getAllAvailableMnemonicLanguages = () => {
+const getAllAvailableMnemonicLanguages = () => {
   return Object.keys(bip39.wordlists)
 }
 
-export const getAllCoins = () => {
+const getAllCoins = () => {
   return COINS
 }
 
-export const generateMnemonic = (strength, rng, language) => {
-  if (!hasStrongRandom()) {
-    return { error: 'This browser does not support strong randomness' }
-  }
+const generateMnemonic = (strength, rng, language) => {
   const wordlist = bip39.wordlists[language]
   const mnemonic = bip39.generateMnemonic(strength, rng, wordlist)
   const isValid = validateMnemonic(mnemonic, wordlist)
@@ -38,22 +31,22 @@ export const generateMnemonic = (strength, rng, language) => {
   return mnemonic
 }
 
-export const mnemonicToSeed = (mnemonic) => {
-  return bip39.mnemonicToSeed(mnemonic)
+const mnemonicToSeed = (mnemonic) => {
+  return bip39.mnemonicToSeedSync(mnemonic)
 }
 
-export const calcBip32RootKeyFromSeed = (mnemonic, network) => {
+const calcBip32RootKeyFromSeed = (mnemonic, network) => {
   const seed = mnemonicToSeed(mnemonic)
   const root = bip32.fromSeed(seed, network)
   return root
 }
 
-export const getAddress = (node, segwitAvailable, network) => {
+const getAddress = (node, segwitAvailable, network) => {
   if (segwitAvailable) {
     const wif = node.toWIF()
     const keyPair = bitcoin.ECPair.fromWIF(wif)
     const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey })
+      redeem: bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
     })
     return address
   } else {
@@ -63,13 +56,16 @@ export const getAddress = (node, segwitAvailable, network) => {
   }
 }
 
-export const getWalletAccount = (node, coin) => {
+const getWalletAccount = (node, coin) => {
   let privateKey
   let publicKey
   let address
+  const wif = node.toWIF()
 
   privateKey = node.privateKey
   publicKey = node.publicKey
+  console.log('privateKey1', privateKey)
+  console.log('publicKey1', publicKey)
   address = getAddress(node, coin.segwitAvailable, coin.network)
 
   // Ethereum values are different
@@ -91,6 +87,8 @@ export const getWalletAccount = (node, coin) => {
     address = ethUtil.addHexPrefix(checksumAddress)
     privateKey = ethUtil.addHexPrefix(privateKey)
     publicKey = ethUtil.addHexPrefix(publicKey)
+    console.log('privateKey2', privateKey)
+    console.log('publicKey2', publicKey)
   }
   if (coin.name == 'NAS - Nebulas') {
     const nebulasAccount = Nebulas.Account
@@ -101,16 +99,16 @@ export const getWalletAccount = (node, coin) => {
     publicKey = account.getPublicKeyString()
   }
   if (coin.name == 'XRP - Ripple') {
-    privateKey = convertRipplePrivate(privateKey)
-    address = convertRippleAddress(address)
+    privateKey = rippleUtils.convertRipplePrivate(wif)
+    address = rippleUtils.convertRippleAddress(address)
   }
   if (coin.name == 'BCH - Bitcoin Cash') {
     address = bchaddr.toCashAddress(address)
   }
-  return ({ address, publicKey, privateKey })
+  return ({ address, publicKey: publicKey.toString('hex'), privateKey: privateKey.toString('hex') })
 }
 
-export const createWalletsForAllCoins = (mnemonic, i = 0) => {
+const createWalletsForAllCoins = (mnemonic, i = 0) => {
   for (const coin in COINS) {
     const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
     const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${i}`)
@@ -119,9 +117,22 @@ export const createWalletsForAllCoins = (mnemonic, i = 0) => {
   }
 }
 
-export const createIndividualWallet = (mnemonic, coin, i) => {
+const createIndividualWallet = (mnemonic, coin, i = 0) => {
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
   const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${i}`)
   const account = getWalletAccount(node, coin)
   return account
+}
+
+module.exports = {
+  validateMnemonic,
+  getAllAvailableMnemonicLanguages,
+  getAllCoins,
+  generateMnemonic,
+  mnemonicToSeed,
+  calcBip32RootKeyFromSeed,
+  getAddress,
+  getWalletAccount,
+  createWalletsForAllCoins,
+  createIndividualWallet
 }

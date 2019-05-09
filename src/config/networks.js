@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   bitcoin: {
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     bech32: 'bc',

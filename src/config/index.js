@@ -1,7 +1,7 @@
-import Networks from './networks'
-import Coins from './coins'
+const Networks = require('./networks')
+const Coins = require('./coins')
 
-export default ({
+module.exports = ({
   networks: Networks,
   coins: Coins,
 })

@@ -1,5 +1,6 @@
-import Networks from './networks'
-export default {
+const Networks = require('./networks')
+
+module.exports = {
   ac: {
     name: 'AC - Asiacoin',
     network: Networks.asiacoin,
@@ -88,7 +89,8 @@ export default {
   btc: {
     name: 'BTC - Bitcoin',
     network: Networks.bitcoin,
-    type: 0
+    type: 0,
+    segwitAvailable: true,
   },
   btcTestnet: {
     name: 'BTC - Bitcoin Testnet',
@@ -397,6 +399,7 @@ export default {
     name: 'LTC - Litecoin',
     network: Networks.litecoin,
     type: 2,
+    segwitAvailable: true
   },
   ltz: {
     name: 'LTZ - LitecoinZ',
