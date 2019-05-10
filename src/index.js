@@ -133,7 +133,34 @@ const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, feePerBy
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
   const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
   coin.api.transaction(node, coin, receiveAddress, amount, feePerByte, (err, tx) => {
-    console.log(tx)
+    if (!err) {
+      console.log(tx)
+    } else {
+      console.log(err)
+    }
+  })
+}
+
+const getBalance = (address, coin, done) => {
+  coin.api.getBalance(address, (err, { balance, unconfirmedBalance }) => {
+    if (!err) {
+      console.log('balance:', balance)
+      console.log('unconfirmedBalance:', unconfirmedBalance)
+    } else {
+      console.log(err)
+    }
+  })
+}
+
+const estimateTxFee = (mnemonic, coin, index) => {
+  const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+  const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
+  coin.api.getFee(node, coin.network, (err, fee) => {
+    if (!err) {
+      console.log(fee)
+    } else {
+      console.log(err)
+    }
   })
 }
 
@@ -148,5 +175,7 @@ module.exports = {
   getWalletAccount,
   createWalletsForAllCoins,
   createIndividualWallet,
-  sendTransaction
+  sendTransaction,
+  getBalance,
+  estimateTxFee
 }
