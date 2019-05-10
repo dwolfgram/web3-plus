@@ -68,8 +68,8 @@ const getWalletAccount = (node, coin) => {
 
   privateKey = node.privateKey
   publicKey = node.publicKey
-  console.log('privateKey1', privateKey)
-  console.log('publicKey1', publicKey)
+  // console.log('privateKey1', privateKey)
+  // console.log('publicKey1', publicKey)
   address = getAddress(node, coin.segwitAvailable, coin.network)
 
   // Ethereum values are different
@@ -122,10 +122,19 @@ const createWalletsForAllCoins = (mnemonic, i = 0) => {
 }
 
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
+  mnemonic = 'month hotel cereal sick shop sudden wine betray pulp diagram erode design'
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
   const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${i}`)
   const account = getWalletAccount(node, coin)
   return account
+}
+
+const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, feePerByte, done) => {
+  const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+  const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
+  coin.api.transaction(node, coin, receiveAddress, amount, feePerByte, (err, tx) => {
+    console.log(tx)
+  })
 }
 
 module.exports = {
@@ -138,5 +147,6 @@ module.exports = {
   getAddress,
   getWalletAccount,
   createWalletsForAllCoins,
-  createIndividualWallet
+  createIndividualWallet,
+  sendTransaction
 }

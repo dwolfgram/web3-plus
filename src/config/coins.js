@@ -1,4 +1,5 @@
 const Networks = require('./networks')
+const segwitPayments = require('bitcoin-segwit-payments')()
 
 module.exports = {
   ac: {
@@ -91,6 +92,7 @@ module.exports = {
     network: Networks.bitcoin,
     type: 0,
     segwitAvailable: true,
+    api: segwitPayments
   },
   btcTestnet: {
     name: 'BTC - Bitcoin Testnet',
