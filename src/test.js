@@ -2,25 +2,35 @@ const generateMnemonic = require('./index').generateMnemonic
 const createIndividualWallet = require('./index').createIndividualWallet
 const sendTransaction = require('./index').sendTransaction
 const getBalance = require('./index').getBalance
+const getTransactionHistory = require('./index').getTransactionHistory
 const estimateTxFee = require('./index').estimateTxFee
 const coins = require('./config/coins')
 
 const createWallet = () => {
   const mnemonic = generateMnemonic()
-  const account = createIndividualWallet(mnemonic, coins.btc, 0)
-  //console.log(account)
+  console.log(mnemonic)
+  const account = createIndividualWallet(mnemonic, coins.eth, 0)
+  console.log(account)
 }
 
 const sendTx = () => {
-  sendTransaction(undefined, coins.btc, 0)
+  sendTransaction(undefined, coins.eth, 0, '', 5.5, ({ asset: { decimals: 18, contractAddress: '' } }))
 }
 
 const checkBalance = () => {
-  getBalance('3CViJc2w7p9AcboXo6BY7SSfsS9dZNvcRM', coins.btc)
+  getBalance('', coins.eth, ({ asset: { decimals: 18 } }))
+}
+
+const checkAllBalances = () => {
+  getBalance('', coins.eth, { assets: [{ symbol: 'BAT', decimals: 18, contractAddress: '' }] })
 }
 
 const getFee = () => {
-  estimateTxFee('month hotel cereal sick shop sudden wine betray pulp diagram erode design', coins.btc, 0)
+  estimateTxFee(undefined, coins.eth, undefined, 0)
 }
 
-getFee()
+const getTxHistory = () => {
+  getTransactionHistory(coins.eth, '')
+}
+
+//getTxHistory()

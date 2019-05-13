@@ -1,5 +1,6 @@
 const Networks = require('./networks')
 const segwitPayments = require('bitcoin-segwit-payments')()
+const web3Payments = require('web3-payments')()
 
 module.exports = {
   ac: {
@@ -271,7 +272,8 @@ module.exports = {
   eth: {
     name: 'ETH - Ethereum',
     network: Networks.bitcoin,
-    type: 60
+    type: 60,
+    api: web3Payments
   },
   excl: {
     name: 'EXCL - Exclusivecoin',

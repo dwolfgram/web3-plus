@@ -122,17 +122,16 @@ const createWalletsForAllCoins = (mnemonic, i = 0) => {
 }
 
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
-  mnemonic = 'month hotel cereal sick shop sudden wine betray pulp diagram erode design'
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
   const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${i}`)
   const account = getWalletAccount(node, coin)
   return account
 }
 
-const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, feePerByte, done) => {
+const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, options) => {
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
   const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
-  coin.api.transaction(node, coin, receiveAddress, amount, feePerByte, (err, tx) => {
+  coin.api.transaction(node, coin, receiveAddress, amount, options, (err, tx) => {
     if (!err) {
       console.log(tx)
     } else {
@@ -141,21 +140,47 @@ const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, feePerBy
   })
 }
 
-const getBalance = (address, coin, done) => {
-  coin.api.getBalance(address, (err, { balance, unconfirmedBalance }) => {
+const getTransactionHistory = (coin, address) => {
+  coin.api.getTxHistory(address, (err, history) => {
     if (!err) {
-      console.log('balance:', balance)
-      console.log('unconfirmedBalance:', unconfirmedBalance)
+      console.log(history)
     } else {
       console.log(err)
     }
   })
 }
 
-const estimateTxFee = (mnemonic, coin, index) => {
-  const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-  const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
-  coin.api.getFee(node, coin.network, (err, fee) => {
+const getBalance = (address, coin, options) => {
+  coin.api.getBalance(address, options, (err, balance) => {
+    if (!err) {
+      console.log(balance)
+    } else {
+      console.log(err)
+    }
+  })
+}
+
+const getAllBalances = (address, coin, assets) => {
+  if (coin.name == 'ETH - Ethereum') {
+    coin.api.getAllBalances(address, assets, (err, balance) => {
+      if (!err) {
+        console.log(balance)
+      } else {
+        console.log(err)
+      }
+    })
+  } else {
+    return ({ error: 'function only available for ETH/ERC20 Tokens' })
+  }
+}
+
+const estimateTxFee = (mnemonic, coin, options, index) => {
+  let node
+  if (mnemonic) {
+    const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+    node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
+  }
+  coin.api.getFee(node, coin.network, options, (err, fee) => {
     if (!err) {
       console.log(fee)
     } else {
@@ -177,5 +202,7 @@ module.exports = {
   createIndividualWallet,
   sendTransaction,
   getBalance,
-  estimateTxFee
+  estimateTxFee,
+  getAllBalances,
+  getTransactionHistory
 }
