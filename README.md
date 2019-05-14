@@ -92,8 +92,12 @@ estimate tx fee
 const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
 ```
 
-Implemented payment libraries:
+#Implemented payment libraries:
+
 [Bitcoin Payments](https://github.com/dwolfgram/bitcoin-segwit-payments)
+
 [Litecoin Payments](https://github.com/dwolfgram/litecoin-segwit-payments)
+
 [Bitcoin cash Payments](https://github.com/dwolfgram/bitcoin-cash-payments)
+
 [Web3 Payments](https://github.com/dwolfgram/web3-payments)
