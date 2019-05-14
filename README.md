@@ -4,6 +4,8 @@ The goal of web3-plus is to provide an open source foundation for devs to access
 
 Contributions are very welcome! The next step is to just continue integrating payment libraries for coins. 
 
+# How to use
+
 install web3-plus
 ```bash
 npm install --save github:dwolfgram/web3-plus
