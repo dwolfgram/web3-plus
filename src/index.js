@@ -18,17 +18,26 @@ const getAllAvailableMnemonicLanguages = () => {
 }
 
 const getAllCoins = () => {
-  return COINS
+  const coins = Object.keys(COINS).map(sym => {
+    return ({ ...COINS[sym], symbol: sym })
+  })
+  return coins
+}
+
+const getCoinByTicker = (ticker) => {
+  return COINS[ticker.toLowerCase()]
 }
 
 const generateMnemonic = (strength, rng, language) => {
-  const wordlist = bip39.wordlists[language]
-  const mnemonic = bip39.generateMnemonic(strength, rng, wordlist)
-  const isValid = validateMnemonic(mnemonic, wordlist)
-  if (!isValid) {
-    return { error: 'invalid mnemonic generated' }
-  }
-  return mnemonic
+  return new Promise((resolve, reject) => {
+    const wordlist = bip39.wordlists[language]
+    const mnemonic = bip39.generateMnemonic(strength, rng, wordlist)
+    const isValid = validateMnemonic(mnemonic, wordlist)
+    if (!isValid) {
+      return reject('invalid mnemonic generated')
+    }
+    return resolve(mnemonic)
+  })
 }
 
 const mnemonicToSeed = (mnemonic) => {
@@ -61,51 +70,53 @@ const getAddress = (node, segwitAvailable, network) => {
 }
 
 const getWalletAccount = (node, coin) => {
-  let privateKey
-  let publicKey
-  let address
-  const wif = node.toWIF()
+  return new Promise((resolve, reject) => {
+    let privateKey
+    let publicKey
+    let address
+    const wif = node.toWIF()
 
-  privateKey = node.privateKey
-  publicKey = node.publicKey
-  address = getAddress(node, coin.segwitAvailable, coin.network)
+    privateKey = node.privateKey
+    publicKey = node.publicKey
+    address = getAddress(node, coin.segwitAvailable, coin.network)
 
-  // Ethereum values are different
-  if (coin.name == 'ETH - Ethereum' || 
-  coin.name == 'ETC - Ethereum Classic' || 
-  coin.name == 'PIRL - Pirl' || 
-  coin.name == 'MIX - MIX' || 
-  coin.name == 'MUSIC - Musicoin' || 
-  coin.name == 'POA - Poa' ||
-  coin.name == 'EXP - Expanse' || 
-  coin.name == 'CLO - Callisto' || 
-  coin.name == 'DXN - DEXON' || 
-  coin.name == 'ELLA - Ellaism' || 
-  coin.name == 'ESN - Ethersocial Network') {
-    publicKey = ethUtil.privateToPublic(privateKey)
-    const addr = ethUtil.publicToAddress(publicKey).toString('hex')
-    const checksumAddress = ethUtil.toChecksumAddress(addr)
-    // add hex prefixes
-    address = ethUtil.addHexPrefix(checksumAddress)
-    privateKey = ethUtil.addHexPrefix(privateKey)
-    publicKey = ethUtil.addHexPrefix(publicKey)
-  }
-  if (coin.name == 'NAS - Nebulas') {
-    const nebulasAccount = Nebulas.Account
-    const account = nebulasAccount.NewAccount()
-    account.setPrivateKey(privateKey)
-    address = account.getAddressString()
-    privateKey = account.getPrivateKeyString()
-    publicKey = account.getPublicKeyString()
-  }
-  if (coin.name == 'XRP - Ripple') {
-    privateKey = rippleUtils.convertRipplePrivate(wif)
-    address = rippleUtils.convertRippleAddress(address)
-  }
-  if (coin.name == 'BCH - Bitcoin Cash') {
-    address = bchaddr.toCashAddress(address)
-  }
-  return ({ address, publicKey: publicKey.toString('hex'), privateKey: privateKey.toString('hex') })
+    // Ethereum values are different
+    if (coin.name == 'ETH - Ethereum' || 
+    coin.name == 'ETC - Ethereum Classic' || 
+    coin.name == 'PIRL - Pirl' || 
+    coin.name == 'MIX - MIX' || 
+    coin.name == 'MUSIC - Musicoin' || 
+    coin.name == 'POA - Poa' ||
+    coin.name == 'EXP - Expanse' || 
+    coin.name == 'CLO - Callisto' || 
+    coin.name == 'DXN - DEXON' || 
+    coin.name == 'ELLA - Ellaism' || 
+    coin.name == 'ESN - Ethersocial Network') {
+      publicKey = ethUtil.privateToPublic(privateKey)
+      const addr = ethUtil.publicToAddress(publicKey).toString('hex')
+      const checksumAddress = ethUtil.toChecksumAddress(addr)
+      // add hex prefixes
+      address = ethUtil.addHexPrefix(checksumAddress)
+      privateKey = ethUtil.addHexPrefix(privateKey)
+      publicKey = ethUtil.addHexPrefix(publicKey)
+    }
+    if (coin.name == 'NAS - Nebulas') {
+      const nebulasAccount = Nebulas.Account
+      const account = nebulasAccount.NewAccount()
+      account.setPrivateKey(privateKey)
+      address = account.getAddressString()
+      privateKey = account.getPrivateKeyString()
+      publicKey = account.getPublicKeyString()
+    }
+    if (coin.name == 'XRP - Ripple') {
+      privateKey = rippleUtils.convertRipplePrivate(wif)
+      address = rippleUtils.convertRippleAddress(address)
+    }
+    if (coin.name == 'BCH - Bitcoin Cash') {
+      address = bchaddr.toCashAddress(address)
+    }
+    return resolve({ address, publicKey: publicKey.toString('hex'), privateKey: privateKey.toString('hex') })
+  })
 }
 
 const createWalletsForAllCoins = (mnemonic, i = 0) => {
@@ -119,6 +130,7 @@ const createWalletsForAllCoins = (mnemonic, i = 0) => {
 }
 
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
+  if (typeof coin === 'string') coin = getCoinByTicker(coin)
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
   const purpose = coin.purpose ? coin.purpose : 44
   const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
@@ -127,65 +139,80 @@ const createIndividualWallet = (mnemonic, coin, i = 0) => {
 }
 
 const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, options) => {
-  const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-  const purpose = coin.purpose ? coin.purpose : 44
-  const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
-  coin.api.transaction(node, coin, receiveAddress, amount, options, (err, tx) => {
-    if (!err) {
-      console.log(tx)
-    } else {
-      console.log(err)
-    }
+  return new Promise((resolve, reject) => {
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+    const purpose = coin.purpose ? coin.purpose : 44
+    const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
+    coin.api().transaction(node, coin, receiveAddress, amount, options, (err, tx) => {
+      if (!err) {
+        return resolve(tx)
+      } else {
+        return reject(err)
+      }
+    })
   })
 }
 
 const getTransactionHistory = (coin, address) => {
-  coin.api.getTxHistory(address, (err, history) => {
-    if (!err) {
-      console.log(history)
-    } else {
-      console.log(err)
-    }
+  return new Promise((resolve, reject) => {
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    coin.api().getTxHistory(address, (err, history) => {
+      if (!err) {
+        return resolve(history)
+      } else {
+        return reject(err)
+      }
+    })
   })
 }
 
 const getBalance = (address, coin, options) => {
-  coin.api.getBalance(address, options, (err, balance) => {
-    if (!err) {
-      console.log(balance)
-    } else {
-      console.log(err)
-    }
+  return new Promise((resolve, reject) => {
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    coin.api().getBalance(address, options, (err, balance) => {
+      if (!err) {
+        return resolve(balance)
+      } else {
+        return reject(err)
+      }
+    })
   })
 }
 
 const getAllBalances = (address, coin, assets) => {
-  if (coin.name == 'ETH - Ethereum') {
-    coin.api.getAllBalances(address, assets, (err, balance) => {
-      if (!err) {
-        console.log(balance)
-      } else {
-        console.log(err)
-      }
-    })
-  } else {
-    return ({ error: 'function only available for ETH/ERC20 Tokens' })
-  }
+  return new Promise((resolve, reject) => {
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    if (coin.name == 'ETH - Ethereum') {
+      coin.api().getAllBalances(address, assets, (err, balance) => {
+        if (!err) {
+          return resolve(balance)
+        } else {
+          return reject(err)
+        }
+      })
+    } else {
+      return reject('function only available for ETH/ERC20 Tokens')
+    }
+  })
 }
 
 const estimateTxFee = (mnemonic, coin, index, options) => {
-  let node
-  if (mnemonic) {
-    const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-    const purpose = coin.purpose ? coin.purpose : 44
-    node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
-  }
-  coin.api.getFee(node, coin.network, options, (err, fee) => {
-    if (!err) {
-      console.log(fee)
-    } else {
-      console.log(err)
+  return new Promise((resolve, reject) => {
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    let node
+    if (mnemonic) {
+      const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+      const purpose = coin.purpose ? coin.purpose : 44
+      node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
     }
+    coin.api().getFee(node, coin.network, options, (err, fee) => {
+      if (!err) {
+        return resolve(fee)
+      } else {
+        return reject(err)
+      }
+    })
   })
 }
 

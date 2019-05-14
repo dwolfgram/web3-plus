@@ -4,12 +4,13 @@ const sendTransaction = require('./index').sendTransaction
 const getBalance = require('./index').getBalance
 const getTransactionHistory = require('./index').getTransactionHistory
 const estimateTxFee = require('./index').estimateTxFee
+const getAllCoins = require('./index').getAllCoins
 const coins = require('./config/coins')
 
 const createWallet = () => {
   //const mnemonic = generateMnemonic()
   //console.log(mnemonic)
-  const account = createIndividualWallet(undefined, coins.bch, 0)
+  const account = createIndividualWallet(undefined, 'bch', 0)
   console.log(account)
 }
 
@@ -26,11 +27,14 @@ const checkAllBalances = () => {
 }
 
 const getFee = () => {
-  estimateTxFee(undefined, coins.bch, 0, undefined)
+  estimateTxFee(undefined, coins.btc, 0, undefined)
 }
 
 const getTxHistory = () => {
-  getTransactionHistory(coins.eth, '')
+  getTransactionHistory(coins.bch, '')
 }
 
-//sendTx()
+const getAllTheCoins = () => {
+
+}
+//getFee()

@@ -44,7 +44,7 @@ module.exports = {
     name: 'BCH - Bitcoin Cash',
     network: Networks.bitcoin,
     type: 145,
-    api: bitcoinCashPayments()
+    api: bitcoinCashPayments
   },
   beet: {
     name: 'BEET - Beetlecoin',
@@ -96,7 +96,7 @@ module.exports = {
     network: Networks.bitcoin,
     type: 0,
     segwitAvailable: true,
-    api: segwitPayments()
+    api: segwitPayments
   },
   btcTestnet: {
     name: 'BTC - Bitcoin Testnet',
@@ -276,7 +276,7 @@ module.exports = {
     name: 'ETH - Ethereum',
     network: Networks.bitcoin,
     type: 60,
-    api: web3Payments()
+    api: web3Payments
   },
   excl: {
     name: 'EXCL - Exclusivecoin',
@@ -408,7 +408,7 @@ module.exports = {
     type: 2,
     segwitAvailable: true,
     purpose: 49,
-    api: litecoinSegwitPayments()
+    api: litecoinSegwitPayments
   },
   ltz: {
     name: 'LTZ - LitecoinZ',
