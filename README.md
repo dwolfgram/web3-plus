@@ -1,12 +1,13 @@
 # web3-plus
 
+install web3-plus
 ```bash
 npm install --save github:dwolfgram/web3-plus
 ```
 
-Require web3plus
+Require web3-plus
 ```js
-const web3plus = require('web3plus')
+const web3plus = require('web3-plus')
 ```
 
 Get all mnemonic languages
