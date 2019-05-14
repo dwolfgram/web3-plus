@@ -78,7 +78,8 @@ estimate tx fee
 ```js
 // options:
 // utxo based (optional just like creating tx): options = { feePerByte: xyz } 
-// or web3: options = { contractAddress: abc }, should provide as token transactions usually have higher fees
+// or web3: options = { contractAddress: abc }, 
+// you should provide this as token transactions have higher fees
 
 const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
 ```
