@@ -2,6 +2,8 @@
 
 The goal of web3-plus is to provide an open source foundation for devs to access when building cryptocurrency resources. I hope it helps someone save some time and can help the crypto space develop.
 
+I am a bit tired of seeing closed source cryptocurrency wallet applications. The best part of crypto is the sharing of knowledge and I hope we can keep that going.
+
 Contributions are very welcome! The next step is to just continue integrating payment libraries for coins. 
 
 # How to use
