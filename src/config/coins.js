@@ -1,6 +1,8 @@
 const Networks = require('./networks')
-const segwitPayments = require('bitcoin-segwit-payments')()
-const web3Payments = require('web3-payments')()
+const segwitPayments = require('bitcoin-segwit-payments')
+const web3Payments = require('web3-payments')
+const litecoinSegwitPayments = require('litecoin-segwit-payments')
+const bitcoinCashPayments = require('bitcoin-cash-payments')
 
 module.exports = {
   ac: {
@@ -41,7 +43,8 @@ module.exports = {
   bch: {
     name: 'BCH - Bitcoin Cash',
     network: Networks.bitcoin,
-    type: 145
+    type: 145,
+    api: bitcoinCashPayments()
   },
   beet: {
     name: 'BEET - Beetlecoin',
@@ -93,7 +96,7 @@ module.exports = {
     network: Networks.bitcoin,
     type: 0,
     segwitAvailable: true,
-    api: segwitPayments
+    api: segwitPayments()
   },
   btcTestnet: {
     name: 'BTC - Bitcoin Testnet',
@@ -273,7 +276,7 @@ module.exports = {
     name: 'ETH - Ethereum',
     network: Networks.bitcoin,
     type: 60,
-    api: web3Payments
+    api: web3Payments()
   },
   excl: {
     name: 'EXCL - Exclusivecoin',
@@ -403,7 +406,9 @@ module.exports = {
     name: 'LTC - Litecoin',
     network: Networks.litecoin,
     type: 2,
-    segwitAvailable: true
+    segwitAvailable: true,
+    purpose: 49,
+    api: litecoinSegwitPayments()
   },
   ltz: {
     name: 'LTZ - LitecoinZ',

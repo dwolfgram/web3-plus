@@ -42,11 +42,11 @@ const calcBip32RootKeyFromSeed = (mnemonic, network) => {
 }
 
 const getAddress = (node, segwitAvailable, network) => {
+  const wif = node.toWIF()
   if (segwitAvailable) {
-    const wif = node.toWIF()
     const keyPair = bitcoin.ECPair.fromWIF(wif, network)
     let { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey })
+      redeem: bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey, network })
     })
     if (network === COINS.ltc.network) {
       const decoded = bitcoin.address.fromBase58Check(address)
@@ -54,7 +54,7 @@ const getAddress = (node, segwitAvailable, network) => {
     }
     return address
   } else {
-    const keyPair = bitcoin.ECPair.makeRandom({ network })
+    const keyPair = bitcoin.ECPair.fromWIF(wif, network)
     const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey, network })
     return address
   }
@@ -68,8 +68,6 @@ const getWalletAccount = (node, coin) => {
 
   privateKey = node.privateKey
   publicKey = node.publicKey
-  // console.log('privateKey1', privateKey)
-  // console.log('publicKey1', publicKey)
   address = getAddress(node, coin.segwitAvailable, coin.network)
 
   // Ethereum values are different
@@ -91,8 +89,6 @@ const getWalletAccount = (node, coin) => {
     address = ethUtil.addHexPrefix(checksumAddress)
     privateKey = ethUtil.addHexPrefix(privateKey)
     publicKey = ethUtil.addHexPrefix(publicKey)
-    console.log('privateKey2', privateKey)
-    console.log('publicKey2', publicKey)
   }
   if (coin.name == 'NAS - Nebulas') {
     const nebulasAccount = Nebulas.Account
@@ -115,7 +111,8 @@ const getWalletAccount = (node, coin) => {
 const createWalletsForAllCoins = (mnemonic, i = 0) => {
   for (const coin in COINS) {
     const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-    const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${i}`)
+    const purpose = coin.purpose ? coin.purpose : 44
+    const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
     const account = getWalletAccount(node, coin)
     return account
   }
@@ -123,14 +120,16 @@ const createWalletsForAllCoins = (mnemonic, i = 0) => {
 
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-  const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${i}`)
+  const purpose = coin.purpose ? coin.purpose : 44
+  const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
   const account = getWalletAccount(node, coin)
   return account
 }
 
 const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, options) => {
   const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-  const node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
+  const purpose = coin.purpose ? coin.purpose : 44
+  const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
   coin.api.transaction(node, coin, receiveAddress, amount, options, (err, tx) => {
     if (!err) {
       console.log(tx)
@@ -174,11 +173,12 @@ const getAllBalances = (address, coin, assets) => {
   }
 }
 
-const estimateTxFee = (mnemonic, coin, options, index) => {
+const estimateTxFee = (mnemonic, coin, index, options) => {
   let node
   if (mnemonic) {
     const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-    node = root.derivePath(`m/44'/${coin.type}'/0'/0/${index}`)
+    const purpose = coin.purpose ? coin.purpose : 44
+    node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
   }
   coin.api.getFee(node, coin.network, options, (err, fee) => {
     if (!err) {
