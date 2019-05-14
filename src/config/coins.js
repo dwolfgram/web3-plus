@@ -25,11 +25,11 @@ module.exports = {
     network: Networks.axe,
     type: 4242
   },
-  anon: {
-    name: 'ANON - ANON',
-    network: Networks.anon,
-    type: 220
-  },
+  // anon: {
+  //   name: 'ANON - ANON',
+  //   network: Networks.anon,
+  //   type: 220
+  // },
   boli: {
     name: 'BOLI - Bolivarcoin',
     network: Networks.bolivarcoin,
@@ -98,7 +98,7 @@ module.exports = {
     segwitAvailable: true,
     api: segwitPayments
   },
-  btcTestnet: {
+  btctestnet: {
     name: 'BTC - Bitcoin Testnet',
     network: Networks.testnet,
     type: 1
@@ -108,26 +108,26 @@ module.exports = {
     network: Networks.bitcoingreen,
     type: 222
   },
-  btcp: {
-    name: 'BTCP - Bitcoin Private',
-    network: Networks.bitcoinprivate,
-    type: 183
-  },
-  btcz: {
-    name: 'BTCZ - Bitcoinz',
-    network: Networks.bitcoinz,
-    type: 177
-  },
+  // btcp: {
+  //   name: 'BTCP - Bitcoin Private',
+  //   network: Networks.bitcoinprivate,
+  //   type: 183
+  // },
+  // btcz: {
+  //   name: 'BTCZ - Bitcoinz',
+  //   network: Networks.bitcoinz,
+  //   type: 177
+  // },
   btdx: {
     name: 'BTDX - BitCloud',
     network: Networks.bitcloud,
     type: 218
   },
-  btg: {
-    name: 'BTG - Bitcoin Gold',
-    network: Networks.bgold,
-    type: 156
-  },
+  // btg: {
+  //   name: 'BTG - Bitcoin Gold',
+  //   network: Networks.bgold,
+  //   type: 156
+  // },
   btx: {
     name: 'BTX - Bitcore',
     network: Networks.bitcore,
@@ -174,11 +174,11 @@ module.exports = {
     network: Networks.crave,
     type: 186
   },
-  crwLegacy: {
-    name: 'CRW - Crown (Legacy)',
-    network: Networks.crown,
-    type: 72
-  },
+  // crwLegacy: {
+  //   name: 'CRW - Crown (Legacy)',
+  //   network: Networks.crown,
+  //   type: 72
+  // },
   crw: {
     name: 'CRW - Crown',
     network: Networks.crown,
@@ -189,7 +189,7 @@ module.exports = {
     network: Networks.dash,
     type: 5
   },
-  dashTestnet: {
+  dashtestnet: {
     name: 'DASH - Dash Testnet',
     network: Networks.dashtn,
     type: 1
@@ -283,11 +283,11 @@ module.exports = {
     network: Networks.exclusivecoin,
     type: 190
   },
-  excc: {
-    name: 'EXCC - ExchangeCoin',
-    network: Networks.exchangecoin,
-    type: 0
-  },
+  // excc: {
+  //   name: 'EXCC - ExchangeCoin',
+  //   network: Networks.exchangecoin,
+  //   type: 0
+  // },
   exp: {
     name: 'EXP - Expanse',
     segwitAvailable: false,
@@ -339,11 +339,11 @@ module.exports = {
     network: Networks.helleniccoin,
     type: 168
   },
-  hush: {
-    name: 'HUSH - Hush',
-    network: Networks.hush,
-    type: 197,
-  },
+  // hush: {
+  //   name: 'HUSH - Hush',
+  //   network: Networks.hush,
+  //   type: 197,
+  // },
   insn: {
     name: 'INSN - Insane',
     network: Networks.insane,
@@ -410,11 +410,11 @@ module.exports = {
     purpose: 49,
     api: litecoinSegwitPayments
   },
-  ltz: {
-    name: 'LTZ - LitecoinZ',
-    network: Networks.litecoinz,
-    type: 221,
-  },
+  // ltz: {
+  //   name: 'LTZ - LitecoinZ',
+  //   network: Networks.litecoinz,
+  //   type: 221,
+  // },
   lynx: {
     name: 'LYNX - Lynx',
     network: Networks.lynx,
@@ -548,7 +548,7 @@ module.exports = {
     network: Networks.pivx,
     type: 119
   },
-  pivxTestnet: {
+  pivxtestnet: {
     name: 'PIVX - PIVX Testnet',
     network: Networks.pivxtestnet,
     type: 1
@@ -624,7 +624,7 @@ module.exports = {
     network: Networks.shadow,
     type: 35
   },
-  sdcTestnet: {
+  sdctestnet: {
     name: 'SDC - ShadowCash Testnet',
     network: Networks.shadowtn,
     type: 1
@@ -634,7 +634,7 @@ module.exports = {
     network: Networks.slimcoin,
     type: 63
   },
-  slmTestnest: {
+  slmtestnest: {
     name: 'SLM - Slimcoin Testnet',
     network: Networks.slimcointn,
     type: 111
@@ -658,7 +658,7 @@ module.exports = {
     network: Networks.stash,
     type: 0xC0C0
   },
-  stashTestnet: {
+  stashtestnet: {
     name: 'STASH - Stash Testnet',
     network: Networks.stashtn,
     type: 0xCAFE
@@ -668,7 +668,7 @@ module.exports = {
     network: Networks.stratis,
     type: 105
   },
-  stratTestnet: {
+  strattestnet: {
     name: 'TSTRAT - Stratis Testnet',
     network: Networks.stratistest,
     type: 105
@@ -713,7 +713,7 @@ module.exports = {
     network: Networks.viacoin,
     type: 14
   },
-  viaTestnet: {
+  viatestnet: {
     name: 'VIA - Viacoin Testnet',
     network: Networks.viacointestnet,
     type: 1
@@ -779,19 +779,19 @@ module.exports = {
     network: Networks.zcoin,
     type: 136
   },
-  zcl: {
-    name: 'ZCL - Zclassic',
-    network: Networks.zclassic,
-    type: 147
-  },
-  zec: {
-    name: 'ZEC - Zcash',
-    network: Networks.zcash,
-    type: 133
-  },
-  zen: {
-    name: 'ZEN - Zencash',
-    network: Networks.zencash,
-    type: 121
-  }
+  // zcl: {
+  //   name: 'ZCL - Zclassic',
+  //   network: Networks.zclassic,
+  //   type: 147
+  // },
+  // zec: {
+  //   name: 'ZEC - Zcash',
+  //   network: Networks.zcash,
+  //   type: 133,
+  // },
+  // zen: {
+  //   name: 'ZEN - Zencash',
+  //   network: Networks.zencash,
+  //   type: 121
+  // }
 }

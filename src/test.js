@@ -5,13 +5,21 @@ const getBalance = require('./index').getBalance
 const getTransactionHistory = require('./index').getTransactionHistory
 const estimateTxFee = require('./index').estimateTxFee
 const getAllCoins = require('./index').getAllCoins
+const getAllAvailableMnemonicLanguages = require('./index').getAllAvailableMnemonicLanguages
+const getAll = require('./index').createWalletsForAllCoins
 const coins = require('./config/coins')
 
-const createWallet = () => {
+const createWallet = async (symbol) => {
   //const mnemonic = generateMnemonic()
   //console.log(mnemonic)
-  const account = createIndividualWallet(undefined, 'bch', 0)
-  console.log(account)
+  try {
+    const account = await createIndividualWallet(undefined, symbol, 0)
+    console.log({ ...account, symbol: symbol })
+  } catch (err) {
+    console.log(symbol)
+  }
+  
+  // console.log({ ...account, symbol })
 }
 
 const sendTx = () => {
@@ -35,6 +43,14 @@ const getTxHistory = () => {
 }
 
 const getAllTheCoins = () => {
-
+  const coins = getAllCoins()
+  Promise.all(coins.map(coin => createWallet(coin.symbol)))
+  .then((w) => w)
 }
-//getFee()
+
+const createAllTheWallets = () => {
+  createWalletsForAllCoins(undefined, 0)
+    .then((wallets) => wallets)
+}
+
+console.log(getAllAvailableMnemonicLanguages())

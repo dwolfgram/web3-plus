@@ -25,7 +25,8 @@ const getAllCoins = () => {
 }
 
 const getCoinByTicker = (ticker) => {
-  return COINS[ticker.toLowerCase()]
+  const coin = COINS[ticker.toLowerCase()]
+  return coin
 }
 
 const generateMnemonic = (strength, rng, language) => {
@@ -75,10 +76,10 @@ const getWalletAccount = (node, coin) => {
     let publicKey
     let address
     const wif = node.toWIF()
-
     privateKey = node.privateKey
     publicKey = node.publicKey
-    address = getAddress(node, coin.segwitAvailable, coin.network)
+    address = getAddress(node, coin.segwitAvailable, coin.network, coin.symbol)
+    if (!address) return reject('error creating address')
 
     // Ethereum values are different
     if (coin.name == 'ETH - Ethereum' || 
@@ -119,23 +120,33 @@ const getWalletAccount = (node, coin) => {
   })
 }
 
-const createWalletsForAllCoins = (mnemonic, i = 0) => {
-  for (const coin in COINS) {
-    const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-    const purpose = coin.purpose ? coin.purpose : 44
-    const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
-    const account = getWalletAccount(node, coin)
-    return account
+const createWalletsForAllCoins = async (mnemonic, i = 0) => {
+  const coins = getAllCoins()
+  try {
+    const wallets = await Promise.all(coins.map(async coin => {
+      const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+      const purpose = coin.purpose ? coin.purpose : 44
+      const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
+      const account = await getWalletAccount(node, coin)
+      return ({ ...account, symbol: coin.symbol })
+    }))
+    return wallets
+  } catch (err) {
+    throw new Error('error creating wallets for all coins', err)
   }
 }
 
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
-  if (typeof coin === 'string') coin = getCoinByTicker(coin)
-  const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
-  const purpose = coin.purpose ? coin.purpose : 44
-  const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
-  const account = getWalletAccount(node, coin)
-  return account
+  return new Promise(async (resolve, reject) => {
+    if (!mnemonic) return reject('you first need to create mnemonic')
+    if (!coin) return reject('you need to provide a coin object or ticker')
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+    const purpose = coin.purpose ? coin.purpose : 44
+    const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
+    const account = await getWalletAccount(node, coin)
+    return resolve(account)
+  })
 }
 
 const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, options) => {
@@ -180,23 +191,6 @@ const getBalance = (address, coin, options) => {
   })
 }
 
-const getAllBalances = (address, coin, assets) => {
-  return new Promise((resolve, reject) => {
-    if (typeof coin === 'string') coin = getCoinByTicker(coin)
-    if (coin.name == 'ETH - Ethereum') {
-      coin.api().getAllBalances(address, assets, (err, balance) => {
-        if (!err) {
-          return resolve(balance)
-        } else {
-          return reject(err)
-        }
-      })
-    } else {
-      return reject('function only available for ETH/ERC20 Tokens')
-    }
-  })
-}
-
 const estimateTxFee = (mnemonic, coin, index, options) => {
   return new Promise((resolve, reject) => {
     if (typeof coin === 'string') coin = getCoinByTicker(coin)
@@ -230,6 +224,5 @@ module.exports = {
   sendTransaction,
   getBalance,
   estimateTxFee,
-  getAllBalances,
   getTransactionHistory
 }

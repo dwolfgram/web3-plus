@@ -10,9 +10,6 @@ module.exports = {
     scriptHash: 0x05,
     wif: 0x80,
   },
-  bitcoincash: {
-    
-  },
   testnet: {
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     bech32: 'tb',
@@ -320,9 +317,9 @@ module.exports = {
       public: 0x0488b21e,
       private: 0x0488ade4
     },
-    pubKeyHash: 38,
-    scriptHash: 23,
-    wif: 128
+    pubKeyHash: 0x38,
+    scriptHash: 0x23,
+    wif: 0x128
   },
   monacoin: {
     messagePrefix: '\x18Monacoin Signed Message:\n',
