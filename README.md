@@ -1,5 +1,9 @@
 # web3-plus
 
+The goal of web3-plus is to provide an open source foundation for devs to access when building cryptocurrency resources. I hope it helps someone save some time and can help the crypto space develop.
+
+Contributions are very welcome! The next step is to just continue integrating payment libraries for coins. 
+
 install web3-plus
 ```bash
 npm install --save github:dwolfgram/web3-plus
@@ -83,3 +87,9 @@ estimate tx fee
 
 const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
 ```
+
+Implemented payment libraries:
+[Bitcoin Payments](https://github.com/dwolfgram/bitcoin-segwit-payments)
+[Litecoin Payments](https://github.com/dwolfgram/litecoin-segwit-payments)
+[Bitcoin cash Payments](https://github.com/dwolfgram/bitcoin-cash-payments)
+[Web3 Payments](https://github.com/dwolfgram/web3-payments)
