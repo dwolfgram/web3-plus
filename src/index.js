@@ -70,7 +70,7 @@ const getAddress = (node, segwitAvailable, network) => {
   }
 }
 
-const getWalletAccount = (node, coin) => {
+const getWalletAccount = (node, coin, index) => {
   return new Promise((resolve, reject) => {
     let privateKey
     let publicKey
@@ -116,7 +116,7 @@ const getWalletAccount = (node, coin) => {
     if (coin.name == 'BCH - Bitcoin Cash') {
       address = bchaddr.toCashAddress(address)
     }
-    return resolve({ address, publicKey: publicKey.toString('hex'), privateKey: privateKey.toString('hex') })
+    return resolve({ address, publicKey: publicKey.toString('hex'), privateKey: privateKey.toString('hex'), index })
   })
 }
 
@@ -127,7 +127,7 @@ const createWalletsForAllCoins = async (mnemonic, i = 0) => {
       const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
       const purpose = coin.purpose ? coin.purpose : 44
       const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
-      const account = await getWalletAccount(node, coin)
+      const account = await getWalletAccount(node, coin, i)
       return ({ ...account, symbol: coin.symbol })
     }))
     return wallets
@@ -144,8 +144,8 @@ const createIndividualWallet = (mnemonic, coin, i = 0) => {
     const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
     const purpose = coin.purpose ? coin.purpose : 44
     const node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${i}`)
-    const account = await getWalletAccount(node, coin)
-    return resolve(account)
+    const account = await getWalletAccount(node, coin, i)
+    return resolve({ ...account, symbol: coin.symbol })
   })
 }
 

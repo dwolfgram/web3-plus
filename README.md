@@ -44,10 +44,10 @@ send transaction
 // index is index of wallet in BIP44 derivation
 
 // web3 if sending erc20 token this option is mandatory
-// const = { asset: { contractAddress, decimals }}
+// options = { asset: { contractAddress, decimals }}
 
 // web3 you can optionally provide functions in options to catch events of sending transaction
-// const { onTxHash, onReceipt, onConfirmation, onError} = options
+// options =  { onTxHash, onReceipt, onConfirmation, onError}
 
 const txObj = await web3plus.sendTransaction(mnemonic, ticker, index, receiveAddress, amount, options)
 ```
@@ -60,11 +60,11 @@ const txns = await web3plus.getTransactionHistory(coin, address)
 get balance (or multiple if web3)
 ```js
 // web3 options:
-// const { assets = [{ symbol: 'BAT', contractAddress: 'tokenContractAddressHere', decimals: 18 }] } = options
+// options =  { assets = [{ symbol: 'BAT', contractAddress: '0xasd..', decimals: 18 }] }
 // if you only want ETH balance no need to provide options
 
 // if want some tokens and ETH dont provide contract address for ETH object:
-// const { assets = [{ ...BAT OBJ }, { symbol: 'ETH', decimals: 18 }] } = options
+// options = { assets = [{ ...BAT OBJ }, { symbol: 'ETH', decimals: 18 }] }
 
 const balance = await web3plus.getBalance(address, coin, options)
 // non web3 =>  const { balance, unconfirmedBalance?  }
@@ -74,7 +74,7 @@ const balance = await web3plus.getBalance(address, coin, options)
 estimate tx fee
 ```js
 // options:
-// utxo based (optional just like creating tx): { feePerByte } 
-// or web3: { contractAddress }, should provide as token transactions usually have higher fees
+// utxo based (optional just like creating tx): options = { feePerByte: xyz } 
+// or web3: options = { contractAddress: abc }, should provide as token transactions usually have higher fees
 const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
 ```
