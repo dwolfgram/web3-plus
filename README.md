@@ -20,20 +20,21 @@ Create new BIP39 mneomonic
 // defaults to english and 12 words
 
 //async
-const mnemonic = await web3plus.generateMnemonic()
+const mnemonic = await web3plus.generateMnemonic(strength, rng, language)
 ```
 
 Get all coins supported
 ```js
 const coins = web3plus.getAllCoins()
-// => [{ name, network, api, symbol, type }]
 ```
 
 Create individual wallet
 ```js
 // ticker can either be coin ticker (should match up to coins retreived above) or whole object
 //async
+
 const wallet = await web3plus.createIndividualWallet(mnemonic, ticker, index)
+
 // => const { address, privateKey, publicKey, symbol, index } = wallet
 ```
 
@@ -67,6 +68,7 @@ get balance (or multiple if web3)
 // options = { assets = [{ ...BAT OBJ }, { symbol: 'ETH', decimals: 18 }] }
 
 const balance = await web3plus.getBalance(address, coin, options)
+
 // non web3 =>  const { balance, unconfirmedBalance?  }
 // web3 => { bat: 20332030, eth: 1020 }
 ```
@@ -76,5 +78,6 @@ estimate tx fee
 // options:
 // utxo based (optional just like creating tx): options = { feePerByte: xyz } 
 // or web3: options = { contractAddress: abc }, should provide as token transactions usually have higher fees
+
 const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
 ```
