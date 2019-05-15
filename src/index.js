@@ -56,7 +56,7 @@ const getAddress = (node, segwitAvailable, network) => {
   if (segwitAvailable) {
     const keyPair = bitcoin.ECPair.fromWIF(wif, network)
     let { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey, network })
+      redeem: bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey, network })
     })
     if (network === COINS.ltc.network) {
       const decoded = bitcoin.address.fromBase58Check(address)
@@ -80,7 +80,6 @@ const getWalletAccount = (node, coin, index) => {
     publicKey = node.publicKey
     address = getAddress(node, coin.segwitAvailable, coin.network, coin.symbol)
     if (!address) return reject('error creating address')
-
     // Ethereum values are different
     if (coin.name == 'ETH - Ethereum' || 
     coin.name == 'ETC - Ethereum Classic' || 
@@ -165,7 +164,7 @@ const sendTransaction = (mnemonic, coin, index, receiveAddress, amount, options)
   })
 }
 
-const getTransactionHistory = (coin, address) => {
+const getTransactionHistory = (address, coin) => {
   return new Promise((resolve, reject) => {
     if (typeof coin === 'string') coin = getCoinByTicker(coin)
     coin.api().getTxHistory(address, (err, history) => {
