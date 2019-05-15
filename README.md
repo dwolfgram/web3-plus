@@ -66,7 +66,7 @@ const txObj = await web3plus.sendTransaction(mnemonic, ticker, index, receiveAdd
 
 get transaction history
 ```js
-const txns = await web3plus.getTransactionHistory(coin, address) 
+const txns = await web3plus.getTransactionHistory(ticker, address) 
 ```
 
 get balance (or multiple if web3)
@@ -79,7 +79,7 @@ get balance (or multiple if web3)
 // options = { assets = [{ ...BAT OBJ }, { symbol: 'ETH', decimals: 18 }] }
 
 // IMPORTANT: ticker should always be 'ETH' getting balance of ERC20 token
-const balance = await web3plus.getBalance(address, coin, options)
+const balance = await web3plus.getBalance(address, ticker, options)
 
 // non web3 =>  const { balance, unconfirmedBalance?  }
 // web3 => { bat: 20332030, eth: 1020 }
@@ -93,7 +93,7 @@ estimate tx fee
 // you should provide this as token transactions have higher fees
 
 // IMPORTANT: ticker should always be 'ETH' if estimating fee for sending ERC20 token
-const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
+const txfee = await web3plus.estimateTxFee(mnemonic, ticker, index, options)
 ```
 
 # Implemented payment libraries:
