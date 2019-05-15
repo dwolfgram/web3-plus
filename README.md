@@ -40,7 +40,8 @@ const coins = web3plus.getAllCoins()
 
 Create individual wallet
 ```js
-// ticker can either be coin ticker (should match up to coins retreived above) or whole object
+// ticker can either be coin ticker (should match up to coins retreived above) 
+// or whole object from getAllCoins function
 
 const wallet = await web3plus.createIndividualWallet(mnemonic, ticker, index)
 
