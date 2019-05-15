@@ -1,5 +1,7 @@
 # web3-plus
 
+Currently supports creating wallets for 130+ coins and full payment support for BTC, ETH, LTC, BCH, and ERC20 tokens.
+
 The goal of web3-plus is to provide an open source foundation for devs to access when building cryptocurrency resources. I hope it helps someone save some time and can help the crypto space develop.
 
 I am a bit tired of seeing closed source cryptocurrency wallet applications. The best part of crypto is the sharing of knowledge and I hope we can keep that going. Shout out to [Ian Coleman](https://github.com/iancoleman/bip39) and [Faa.st](https://github.com/go-faast) for providing a lot of the base for this project.
