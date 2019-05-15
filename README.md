@@ -75,7 +75,7 @@ get balance (or multiple if web3)
 // if want some tokens and ETH dont provide contract address for ETH object:
 // options = { assets = [{ ...BAT OBJ }, { symbol: 'ETH', decimals: 18 }] }
 
-// IMPORTANT: ticker should always be 'ETH' if sending an ERC20 token
+// IMPORTANT: ticker should always be 'ETH' getting balance of ERC20 token
 const balance = await web3plus.getBalance(address, coin, options)
 
 // non web3 =>  const { balance, unconfirmedBalance?  }
@@ -89,7 +89,7 @@ estimate tx fee
 // or web3: options = { contractAddress: abc }, 
 // you should provide this as token transactions have higher fees
 
-// IMPORTANT: ticker should always be 'ETH' if sending an ERC20 token
+// IMPORTANT: ticker should always be 'ETH' if estimating fee for sending ERC20 token
 const txfee = await web3plus.estimateTxFee(mnemonic, coin, index, options)
 ```
 
