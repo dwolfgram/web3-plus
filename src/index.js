@@ -25,7 +25,8 @@ const getAllCoins = () => {
 }
 
 const getCoinByTicker = (ticker) => {
-  const coin = COINS[ticker.toLowerCase()]
+  const coins = getAllCoins()
+  const coin = coins.find(coin => coin.symbol.toLowerCase() === ticker.toLowerCase())
   return coin
 }
 
