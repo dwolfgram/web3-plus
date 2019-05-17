@@ -22,7 +22,6 @@
     "bitcoinjs-lib": "^5.0.3",
     "ethereumjs-util": "^6.1.0",
     "litecoin-segwit-payments": "github:dwolfgram/litecoin-segwit-payments#master",
-    "nebulas": "^0.5.6",
     "web3-payments": "github:dwolfgram/web3-payments"
   },
   "devDependencies": {

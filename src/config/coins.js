@@ -457,11 +457,11 @@ module.exports = {
     network: Networks.navcoin,
     type: 130,
   },
-  nas: {
-    name: 'NAS - Nebulas',
-    network: Networks.bitcoin,
-    type: 2718
-  },
+  // nas: {
+  //   name: 'NAS - Nebulas',
+  //   network: Networks.bitcoin,
+  //   type: 2718
+  // },
   nebl: {
     name: 'NEBL - Neblio',
     network: Networks.neblio,

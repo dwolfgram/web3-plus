@@ -4,7 +4,6 @@ const bip39 = require('bip39')
 const bip32 = require('bip32')
 const bitcoin = require('bitcoinjs-lib')
 const ethUtil = require('ethereumjs-util')
-const Nebulas = require('nebulas')
 const bchaddr = require('bchaddrjs')
 
 const COINS = config.coins
@@ -101,14 +100,14 @@ const getWalletAccount = (node, coin, index) => {
       privateKey = ethUtil.addHexPrefix(privateKey)
       publicKey = ethUtil.addHexPrefix(publicKey)
     }
-    if (coin.name == 'NAS - Nebulas') {
-      const nebulasAccount = Nebulas.Account
-      const account = nebulasAccount.NewAccount()
-      account.setPrivateKey(privateKey)
-      address = account.getAddressString()
-      privateKey = account.getPrivateKeyString()
-      publicKey = account.getPublicKeyString()
-    }
+    // if (coin.name == 'NAS - Nebulas') {
+    //   const nebulasAccount = Nebulas.Account
+    //   const account = nebulasAccount.NewAccount()
+    //   account.setPrivateKey(privateKey)
+    //   address = account.getAddressString()
+    //   privateKey = account.getPrivateKeyString()
+    //   publicKey = account.getPublicKeyString()
+    // }
     if (coin.name == 'XRP - Ripple') {
       privateKey = rippleUtils.convertRipplePrivate(wif)
       address = rippleUtils.convertRippleAddress(address)
