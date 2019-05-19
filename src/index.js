@@ -180,9 +180,12 @@ const getTransactionHistory = (address, coin) => {
 const getBalance = (address, coin, options) => {
   return new Promise((resolve, reject) => {
     if (typeof coin === 'string') coin = getCoinByTicker(coin)
-    coin.api().getBalance(address, options, (err, balance) => {
+    coin.api().getBalance(address, options, (err, res) => {
       if (!err) {
-        return resolve(balance)
+        if (res.balance) {
+          return resolve({ ...res, symbol: coin.symbol })
+        }
+        return resolve(res)
       } else {
         return reject(err)
       }
