@@ -182,7 +182,7 @@ const getBalance = (address, coin, options) => {
     if (typeof coin === 'string') coin = getCoinByTicker(coin)
     coin.api().getBalance(address, options, (err, res) => {
       if (!err) {
-        if (res.balance) {
+        if (typeof res.balance !== 'undefined') {
           return resolve({ ...res, symbol: coin.symbol })
         }
         return resolve(res)
