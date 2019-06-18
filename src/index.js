@@ -1,5 +1,5 @@
 const config = require('./config')
-const rippleUtils = require('./utils/ripple-utils')
+const rippleUtils = require('../utils/ripple-utils')
 const bip39 = require('bip39')
 const bip32 = require('bip32')
 const bitcoin = require('bitcoinjs-lib')
@@ -135,6 +135,14 @@ const createWalletsForAllCoins = async (mnemonic, i = 0) => {
   }
 }
 
+const getExtendedPublicKey = (mnemonic, coin) => {
+  if (typeof coin === 'string') coin = getCoinByTicker(coin)
+  const root = calcBip32RootKeyFromSeed(mnemonic, coin.network)
+  const purpose = coin.purpose ? coin.purpose : 44
+  const xpub = root.derivePath(`m/${purpose}'/${coin.type}'/0'`).neutered().toBase58()
+  return xpub
+}
+
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
   return new Promise(async (resolve, reject) => {
     if (!mnemonic) return reject('you first need to create mnemonic')
@@ -193,6 +201,20 @@ const getBalance = (address, coin, options) => {
   })
 }
 
+const discoverAccount = (mnemonic, coin) => {
+  return new Promise((resolve, reject) => {
+    if (typeof coin === 'string') coin = getCoinByTicker(coin)
+    const xpub = getExtendedPublicKey(mnemonic, coin)
+    coin.api().discoverAccount(xpub, coin.network, (err, account) => {
+      if (!err) {
+        resolve(account)
+      } else {
+        reject(err)
+      }
+    })
+  })
+}
+
 const estimateTxFee = (mnemonic, coin, index, options) => {
   return new Promise((resolve, reject) => {
     if (typeof coin === 'string') coin = getCoinByTicker(coin)
@@ -226,5 +248,7 @@ module.exports = {
   sendTransaction,
   getBalance,
   estimateTxFee,
-  getTransactionHistory
+  getTransactionHistory,
+  discoverAccount,
+  getExtendedPublicKey
 }

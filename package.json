@@ -13,6 +13,8 @@
     "url": "git+https://github.com/dwolfgram/web3-plus.git"
   },
   "dependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/register": "^7.4.4",
     "base-x": "^3.0.5",
     "bchaddrjs": "^0.3.2",
     "bip32": "^1.0.4",

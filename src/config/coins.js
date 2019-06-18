@@ -96,7 +96,8 @@ module.exports = {
     network: Networks.bitcoin,
     type: 0,
     segwitAvailable: true,
-    api: segwitPayments
+    api: segwitPayments,
+    purpose: 44,
   },
   btctestnet: {
     name: 'BTC - Bitcoin Testnet',
