@@ -143,6 +143,11 @@ const getExtendedPublicKey = (mnemonic, coin) => {
   return xpub
 }
 
+const getNetwork = (coin) => {
+  if (typeof coin === 'string') coin = getCoinByTicker(coin)
+  return coin.network
+}
+
 const createIndividualWallet = (mnemonic, coin, i = 0) => {
   return new Promise(async (resolve, reject) => {
     if (!mnemonic) return reject('you first need to create mnemonic')
@@ -216,7 +221,7 @@ const discoverAccount = (mnemonic, coin) => {
 }
 
 const estimateTxFee = (mnemonic, coin, index, options) => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (typeof coin === 'string') coin = getCoinByTicker(coin)
     let node
     if (mnemonic) {
@@ -224,13 +229,12 @@ const estimateTxFee = (mnemonic, coin, index, options) => {
       const purpose = coin.purpose ? coin.purpose : 44
       node = root.derivePath(`m/${purpose}'/${coin.type}'/0'/0/${index}`)
     }
-    coin.api().getFee(node, coin.network, options, (err, fee) => {
-      if (!err) {
-        return resolve(fee)
-      } else {
-        return reject(err)
-      }
-    })
+    try {
+      const fee = await coin.api().getFee(node, coin.network, options)
+      return resolve(fee)
+    } catch (err) {
+      reject(err)
+    }
   })
 }
 
@@ -250,5 +254,6 @@ module.exports = {
   estimateTxFee,
   getTransactionHistory,
   discoverAccount,
-  getExtendedPublicKey
+  getExtendedPublicKey,
+  getNetwork
 }
